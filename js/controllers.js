@@ -8,6 +8,21 @@ angular.module('app.controllers', [])
                 inputs: 3,
                 locks: 0,
                 keys: 1
+            },
+            {
+                inputs: 4,
+                locks: 0,
+                keys: 1
+            },
+            {
+                inputs: 5,
+                locks: 0,
+                keys: 1
+            },
+            {
+                inputs: 6,
+                locks: 0,
+                keys: 1
             }
         ];
 
@@ -18,10 +33,12 @@ angular.module('app.controllers', [])
         $scope.level = $scope.levels[$scope.settings.currentLevel];
 
         $scope.inputs = [];
+        $scope.correctInputs = [];
 
 
         $scope.init = function() {
-            $scope.changeLevel(1);
+
+            $scope.changeLevel(0);
         }
 
         $scope.showInstructions = function() {
@@ -32,18 +49,31 @@ angular.module('app.controllers', [])
 
         $scope.changeLevel = function(levelNumber) {
 
-            $scope.attemptCount = 0;
-            $scope.settings.currentLevel = levelNumber - 1;
-            $scope.level = $scope.levels[$scope.settings.currentLevel];
+            if (!$scope.levels[levelNumber]) {
+                $scope.showError('Specified level does not exist');
+                return;
+            }
 
-            for(var i = 0; i < $scope.level.inputs; i++) {
+
+            $scope.attemptCount = 0;
+            $scope.settings.currentLevel = levelNumber;
+            $scope.level = $scope.levels[$scope.settings.currentLevel];
+            $scope.inputs = [];
+            $scope.correctInputs = [];
+
+            for (var i = 0; i < $scope.level.inputs; i++) {
                 $scope.inputs.push(
                     {
                         value: null
                     }
                 );
+                $scope.correctInputs.push(
+                    {
+                        value: Math.random() > 0.5 ? 1 : 0
+                    }
+                );
             }
-        }
+        };
 
         $scope.pressKey = function(event) {
             if(event.charCode == 48) {
@@ -58,6 +88,10 @@ angular.module('app.controllers', [])
             }
         };
 
+        $scope.ignoreKeyPress = function(event) {
+            // Ignore key presses when focused on an input
+            event.stopPropagation();
+        };
         $scope.clickZero = function() {
             $scope.insertNextInputValue(false);
         };
@@ -86,14 +120,61 @@ angular.module('app.controllers', [])
             SweetAlert.swal("Error!", msg || "Something went wrong.", "error");
         }
 
+        $scope.areInputsFilled = function() {
+
+            var isFilled = true;
+
+            _.each($scope.inputs, function(input) {
+                if(input.value == null) {
+                    isFilled = false;
+                    return;
+                }
+            });
+
+            return isFilled;
+        }
+
+        $scope.clearInputs = function() {
+            _.each($scope.inputs, function(input) {
+                input.value = null;
+            });
+        };
+
+        $scope.checkInputs = function() {
+
+            for(var i = 0; i < $scope.inputs.length; i++) {
+                if($scope.inputs[i].value == null
+                    || $scope.inputs[i].value != $scope.correctInputs[i].value)
+                {
+                    return false
+                }
+            }
+            return true;
+        };
+
         $scope.submit = function() {
+
+            if(!$scope.areInputsFilled()) {
+                // Inputs are not filled
+                return;
+            }
 
             $scope.attemptCount++;
 
-            SweetAlert.swal("Good job!", "You clicked the button!", "success");
+            var isCorrect = $scope.checkInputs();
 
-            _.each($scope.inputs, function(input) {
-               input.value = null;
-            });
+            if(isCorrect) {
+                if($scope.settings.currentLevel + 1 < $scope.levels.length) {
+                    SweetAlert.swal("Congratulations", "You are now on Level " + ($scope.settings.currentLevel + 2), "success");
+                    $scope.settings.currentLevel + 1
+                    $scope.changeLevel($scope.settings.currentLevel + 1);
+                } else {
+                    SweetAlert.swal("Good job!", "You finished all the levels!", "success");
+                }
+            } else {
+                $scope.showError('Incorrect input sequence');
+            }
+
+            $scope.clearInputs();
         }
     }]);
