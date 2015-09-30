@@ -1,0 +1,26 @@
+{
+  "name": "SIBGame",
+  "version": "0.0.0",
+  "authors": [
+    "Raz Friman <superraz375@yahoo.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "lodash": "~3.10.1",
+    "bootstrap": "~3.3.5",
+    "angular": "~1.4.6",
+    "angular-sweetalert": "latest",
+    "font-awesome": "~4.4.0"
+  },
+  "resolutions": {
+    "angular": "~1.4.6"
+  }
+}
