@@ -29,3 +29,18 @@
     border-radius: 4px;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+.form-control.input-number {
+    width: 70px;
+    height: 70px;
+    margin-left: 5px;
+    font-size: 40px;
+    font-family: "Courier New";
+    font-weight: bold;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

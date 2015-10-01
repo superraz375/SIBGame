@@ -1,33 +1,36 @@
 angular.module('app.controllers', [])
-    .controller('controller', ['$scope', 'SweetAlert', function($scope, SweetAlert) {
+    .controller('controller', ['$scope', '$timeout', 'SweetAlert', function($scope, $timeout, SweetAlert) {
 
         $scope.attemptCount = 0;
 
         $scope.levels = [
             {
                 inputs: 3,
-                locks: 0,
+                locks: 1,
                 keys: 1
             },
             {
                 inputs: 4,
                 locks: 0,
-                keys: 1
+                keys: 2
             },
             {
                 inputs: 5,
                 locks: 0,
-                keys: 1
+                keys: 3
             },
             {
                 inputs: 6,
                 locks: 0,
-                keys: 1
+                keys: 4
             }
         ];
 
         $scope.settings = {
             currentLevel: 0,
+            lockResetDelay: 2,
+            isBusyResetting: false,
+            isLocked: false
         }
 
         $scope.level = $scope.levels[$scope.settings.currentLevel];
@@ -69,10 +72,25 @@ angular.module('app.controllers', [])
                 );
                 $scope.correctInputs.push(
                     {
-                        value: Math.random() > 0.5 ? 1 : 0
+                        value: null,
+                        isLock: false
                     }
                 );
             }
+
+            for(var i = 0; i < $scope.level.keys; i++) {
+                $scope.correctInputs[i].value = Math.random() > 0.5 ? 0 : 1;
+            }
+
+            for(var i = $scope.level.keys; i < $scope.level.keys + $scope.level.locks; i++) {
+                $scope.correctInputs[i] =
+                {
+                    value: Math.random() > 0.5 ? 0 : 1,
+                    isLock: true
+                }
+            }
+
+            $scope.correctInputs = _.shuffle($scope.correctInputs);
         };
 
         $scope.pressKey = function(event) {
@@ -142,20 +160,43 @@ angular.module('app.controllers', [])
 
         $scope.checkInputs = function() {
 
+            if($scope.settings.isLocked) {
+                // System is locked, ignore inputs
+                return false;
+            }
+
             for(var i = 0; i < $scope.inputs.length; i++) {
-                if($scope.inputs[i].value == null
-                    || $scope.inputs[i].value != $scope.correctInputs[i].value)
-                {
-                    return false
+                if($scope.inputs[i].value == null) {
+                    return false;
+                } else if ($scope.inputs[i].value != $scope.correctInputs[i].value && $scope.correctInputs[i].value != null) {
+
+                    if($scope.correctInputs[i].isLock) {
+                        // Triggered a lock. Correct answer will not open until lock has been reset
+                        console.log('Lock has been triggered.')
+                        $scope.settings.isLocked = true;
+                    }
+                    return false;
                 }
             }
             return true;
         };
 
+        $scope.resetLocks = function() {
+
+            $scope.settings.isBusyResetting = true;
+            $scope.settings.isLocked = false;
+            $timeout($scope.finishLockReset, $scope.settings.lockResetDelay * 1000);
+        };
+
+        $scope.finishLockReset = function() {
+            $scope.settings.isBusyResetting = false;
+            console.log('Locks have been reset.');
+        };
+
         $scope.submit = function() {
 
-            if(!$scope.areInputsFilled()) {
-                // Inputs are not filled
+            if(!$scope.areInputsFilled() || $scope.settings.isBusyResetting) {
+                // Inputs are not filled or system is waiting to reset locks
                 return;
             }
 
