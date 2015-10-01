@@ -54,7 +54,11 @@
                     <div>Keys: {{level.keys}}</div>
 
                     <div>&nbsp;</div>
-                    <div>Correct Inputs: {{correctInputs}}</div>
+                    <div>Correct Inputs:
+                        <span ng-repeat="input in correctInputs">
+                            {{input.value == null ? 'X' :  input.value}}
+                        </span>
+                    </div>
 
                     <div>&nbsp;</div>
                     <div>Attempts: {{attemptCount}}</div>
@@ -83,9 +87,14 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <button class="btn btn-lg btn-primary btn-block" ng-disabled="!areInputsFilled()" ng-click="submit()" >
+            <button class="btn btn-lg btn-primary btn-block" ng-disabled="!areInputsFilled() || settings.isBusyResetting" ng-click="submit()" >
                 <i class="fa fa-key"></i>
                 Unlock
+            </button>
+
+            <button class="btn btn-lg btn-primary btn-block" ng-disabled="settings.isBusyResetting" ng-click="resetLocks()" >
+                <i class="fa fa-undo"></i>
+                Reset Locks ({{settings.lockResetDelay}}s Delay)
             </button>
         </div>
     </div>
