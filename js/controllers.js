@@ -6,23 +6,63 @@ angular.module('app.controllers', [])
         $scope.levels = [
             {
                 inputs: 3,
-                locks: 1,
+                locks: 0,
                 keys: 1
             },
             {
-                inputs: 4,
-                locks: 0,
+                inputs: 3,
+                locks: 1,
                 keys: 2
+            },
+            {
+                inputs: 4,
+                locks: 1,
+                keys: 3
             },
             {
                 inputs: 5,
                 locks: 0,
+                keys: 4
+            },
+            {
+                inputs: 7,
+                locks: 1,
+                keys: 6
+            },
+            {
+                inputs: 8,
+                locks: 4,
+                keys: 0
+            },
+            {
+                inputs: 9,
+                locks: 2,
+                keys: 5
+            },
+            {
+                inputs: 10,
+                locks: 2,
+                keys: 6
+            },
+            {
+                inputs: 11,
+                locks: 4,
                 keys: 3
             },
             {
-                inputs: 6,
-                locks: 0,
-                keys: 4
+                inputs: 12,
+                locks: 7,
+                keys: 2
+            },
+            {
+                inputs: 13,
+                locks: 2,
+                keys: 8
+            },
+            {
+                inputs: 14,
+                locks: 1,
+                keys: 11
             }
         ];
 
