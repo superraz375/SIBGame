@@ -54,7 +54,8 @@
                     <div>Keys: {{level.keys}}</div>
 
                     <div>&nbsp;</div>
-                    <div>Correct Inputs:
+                    <label><input type="checkbox" ng-model="settings.showCorrectInputs"/> Show Correct Inputs</label>
+                    <div ng-show="settings.showCorrectInputs">Correct Inputs:
                         <span ng-repeat="input in correctInputs">
                             {{input.value == null ? 'X' :  input.value}}{{input.isLock ? 'L' : ''}}
                         </span>

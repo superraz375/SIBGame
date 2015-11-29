@@ -30,7 +30,8 @@ angular.module('app.controllers', [])
             currentLevel: 0,
             lockResetDelay: 2,
             isBusyResetting: false,
-            isLocked: false
+            isLocked: false,
+            showCorrectInputs: false
         }
 
         $scope.level = $scope.levels[$scope.settings.currentLevel];
