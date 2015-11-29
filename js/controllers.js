@@ -39,6 +39,8 @@ angular.module('app.controllers', [])
         $scope.correctInputs = [];
 
 
+        $scope.inputHistory = {};
+
         $scope.init = function() {
 
             $scope.changeLevel(0);
@@ -91,6 +93,15 @@ angular.module('app.controllers', [])
             }
 
             $scope.correctInputs = _.shuffle($scope.correctInputs);
+
+            $scope.inputHistory[levelNumber] = {
+                levelNumber: levelNumber,
+                inputs: $scope.level.inputs,
+                locks: $scope.level.locks,
+                keys: $scope.level.keys,
+                correctInputs: $scope.correctInputs,
+                userInputEntries: []
+            }
         };
 
         $scope.pressKey = function(event) {
@@ -166,10 +177,12 @@ angular.module('app.controllers', [])
             }
 
             for(var i = 0; i < $scope.inputs.length; i++) {
+
+                console.log($scope.inputs[i].value);
+
                 if($scope.inputs[i].value == null) {
                     return false;
                 } else if ($scope.inputs[i].value != $scope.correctInputs[i].value && $scope.correctInputs[i].value != null) {
-
                     if($scope.correctInputs[i].isLock) {
                         // Triggered a lock. Correct answer will not open until lock has been reset
                         console.log('Lock has been triggered.')
@@ -193,14 +206,55 @@ angular.module('app.controllers', [])
             console.log('Locks have been reset.');
         };
 
+        $scope.saveInputEntry = function() {
+            var inputValues = _.map($scope.inputs, function(item) {
+                return item.value;
+            });
+            $scope.inputHistory[$scope.settings.currentLevel].userInputEntries.push(inputValues);
+        };
+
+        $scope.downloadInputHistory = function() {
+            $scope.saveToPc(JSON.stringify($scope.inputHistory, null, 4),'InputHistory.json')
+        };
+
+        $scope.saveToPc = function (data, filename) {
+
+            if (!data) {
+                console.error('No data');
+                return;
+            }
+
+            if (!filename) {
+                filename = 'download.json';
+            }
+
+            if (typeof data === 'object') {
+                data = JSON.stringify(data, undefined, 2);
+            }
+
+            var blob = new Blob([data], {type: 'text/json'}),
+                e = document.createEvent('MouseEvents'),
+                a = document.createElement('a');
+
+            a.download = filename;
+            a.href = window.URL.createObjectURL(blob);
+            a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+            e.initMouseEvent('click', true, false, window,
+                0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
+        };
+
         $scope.submit = function() {
 
+            console.log('submit');
             if(!$scope.areInputsFilled() || $scope.settings.isBusyResetting) {
                 // Inputs are not filled or system is waiting to reset locks
                 return;
             }
 
             $scope.attemptCount++;
+
+            $scope.saveInputEntry();
 
             var isCorrect = $scope.checkInputs();
 
