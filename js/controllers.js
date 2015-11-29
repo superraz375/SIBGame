@@ -177,9 +177,6 @@ angular.module('app.controllers', [])
             }
 
             for(var i = 0; i < $scope.inputs.length; i++) {
-
-                console.log($scope.inputs[i].value);
-
                 if($scope.inputs[i].value == null) {
                     return false;
                 } else if ($scope.inputs[i].value != $scope.correctInputs[i].value && $scope.correctInputs[i].value != null) {
@@ -246,7 +243,6 @@ angular.module('app.controllers', [])
 
         $scope.submit = function() {
 
-            console.log('submit');
             if(!$scope.areInputsFilled() || $scope.settings.isBusyResetting) {
                 // Inputs are not filled or system is waiting to reset locks
                 return;
