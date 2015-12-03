@@ -50,14 +50,14 @@
                 <div class="code">
                     <h2>Level {{settings.currentLevel + 1}}</h2>
                     <div>Inputs: {{level.inputs}}</div>
-                    <div>Locks: {{level.locks}}</div>
+                    <div>Traps: {{level.locks}}</div>
                     <div>Keys: {{level.keys}}</div>
 
                     <div>&nbsp;</div>
                     <label><input type="checkbox" ng-model="settings.showCorrectInputs"/> Show Correct Inputs</label>
                     <div ng-show="settings.showCorrectInputs">Correct Inputs:
                         <span ng-repeat="input in correctInputs">
-                            {{input.value == null ? 'X' :  input.value}}{{input.isLock ? 'L' : ''}}
+                            {{input.value == null ? 'X' :  input.value}}{{input.isLock ? 'T' : ''}}
                         </span>
                     </div>
 
